@@ -1,183 +1,92 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faUserPlus, faUserTie, faUsers, faChartLine } from "@fortawesome/free-solid-svg-icons";
+// components/Step5.jsx (Review & Calculate)
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-const Step5 = ({ formData, setFormData, next, prev, formatCurrency }) => {
-  // This step only shows for L license
-  if (formData.license !== "L") {
-    // Skip to next step
-    next();
-    return null;
-  }
+export default function Step5({ formData, setFormData, next, back, canGoNext, formatCurrency }) {
+  const totalEffort = formData.selectedLicenses.reduce(
+    (sum, lic) => sum + (parseFloat(formData.effortAllocation[lic]) || 0),
+    0
+  );
+
+  const calculateIncome = () => {
+    const baseIncome = parseInt(formData.desiredIncome) || 0;
+    const breakdown = {};
+    let totalIncome = 0;
+
+    formData.selectedLicenses.forEach(license => {
+      const effort = parseFloat(formData.effortAllocation[license]) || 0;
+      const licenseIncome = (baseIncome * effort) / 100;
+      breakdown[license] = licenseIncome;
+      totalIncome += licenseIncome;
+    });
+
+    return { breakdown, totalIncome };
+  };
+
+  const { breakdown, totalIncome } = calculateIncome();
 
   return (
-    <div className="question-page">
-      <div className="question-header">
-        <div className="question-number">Step 5 of 9</div>
-        <h2 className="question-title">Recruiting Agent Options</h2>
-        <p className="question-description">
-          As a Leadership License holder, you can build a team
-        </p>
-      </div>
+    <div className="step-card">
+      <div>
+        <h1>Review & Calculate</h1>
+        <p>Review your selections and calculate projected income</p>
 
-      <div className="question-content">
-        <div className="recruiting-section">
-          <div className="recruiting-choice">
-            <h4>Will you be recruiting agents?</h4>
-            <div className="choice-cards">
-              <div
-                className={`choice-card ${formData.isRecruitingAgent ? "selected" : ""}`}
-                onClick={() => setFormData(prev => ({ ...prev, isRecruitingAgent: true }))}
-              >
-                <div className="choice-icon">
-                  <FontAwesomeIcon icon={faUserPlus} />
+        <div className="review-summary">
+          <div className="summary-item">
+            <span>Desired Income:</span>
+            <strong>{formatCurrency(formData.desiredIncome)}</strong>
+          </div>
+
+          <div className="summary-item">
+            <span>Selected Licenses:</span>
+            <strong>{formData.selectedLicenses.join(', ')}</strong>
+          </div>
+
+          <div className="summary-item">
+            <span>Effort Allocation:</span>
+            <div className="effort-breakdown">
+              {formData.selectedLicenses.map(lic => (
+                <div key={lic} className="license-effort">
+                  {lic}: {formData.effortAllocation[lic] || 0}%
                 </div>
-                <h3>Yes</h3>
-                <p>I want to build a team</p>
-                <ul>
-                  <li>Earn override commissions</li>
-                  <li>Team leadership bonuses</li>
-                  <li>Recruitment incentives</li>
-                  <li>Residual income streams</li>
-                </ul>
-              </div>
-              
-              <div
-                className={`choice-card ${!formData.isRecruitingAgent ? "selected" : ""}`}
-                onClick={() => setFormData(prev => ({ ...prev, isRecruitingAgent: false }))}
-              >
-                <div className="choice-icon">
-                  <FontAwesomeIcon icon={faUserTie} />
-                </div>
-                <h3>No</h3>
-                <p>Focus on direct sales only</p>
-                <ul>
-                  <li>Higher personal commissions</li>
-                  <li>No team management</li>
-                  <li>Simpler business model</li>
-                  <li>Direct client focus</li>
-                </ul>
+              ))}
+              <div className="total-effort-display">
+                Total: {totalEffort}%
               </div>
             </div>
           </div>
 
-          {formData.isRecruitingAgent && (
-            <div className="recruiting-details">
-              <h4>Team Building Details:</h4>
-              <div className="team-inputs">
-                <div className="input-group">
-                  <label>
-                    <FontAwesomeIcon icon={faUsers} />
-                    <span>Number of Recruits (First Year)</span>
-                  </label>
-                  <div className="input-with-slider">
-                    <input
-                      type="number"
-                      value={formData.numberOfRecruits}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        numberOfRecruits: Math.max(0, Math.min(100, Number(e.target.value)))
-                      }))}
-                      min="0"
-                      max="100"
-                      placeholder="0"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={formData.numberOfRecruits}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        numberOfRecruits: Number(e.target.value)
-                      }))}
-                      className="slider"
-                    />
-                  </div>
-                  <div className="input-hint">Typical range: 5-20 recruits in first year</div>
-                </div>
-
-                <div className="input-group">
-                  <label>
-                    <FontAwesomeIcon icon={faChartLine} />
-                    <span>Override Rate (%)</span>
-                  </label>
-                  <div className="input-with-slider">
-                    <input
-                      type="number"
-                      value={formData.overrideRate}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        overrideRate: Math.max(0, Math.min(50, Number(e.target.value)))
-                      }))}
-                      min="0"
-                      max="50"
-                      step="0.5"
-                      placeholder="5"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      value={formData.overrideRate}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        overrideRate: Number(e.target.value)
-                      }))}
-                      className="slider"
-                    />
-                  </div>
-                  <div className="input-hint">Typical override: 3-10% of team sales</div>
-                </div>
-              </div>
-
-              <div className="team-preview">
-                <h4>Team Income Preview:</h4>
-                <div className="preview-grid">
-                  <div className="preview-card">
-                    <div className="preview-label">Annual Overrides</div>
-                    <div className="preview-value">
-                      {formatCurrency(formData.numberOfRecruits * 50000 * (formData.overrideRate / 100))}
-                    </div>
-                    <div className="preview-sub">
-                      Based on ${formatCurrency(50000)} avg per recruit
-                    </div>
-                  </div>
-                  <div className="preview-card">
-                    <div className="preview-label">Total Team ANP</div>
-                    <div className="preview-value">
-                      {formatCurrency(formData.numberOfRecruits * 500000)}
-                    </div>
-                    <div className="preview-sub">
-                      Estimated team annual premium
-                    </div>
-                  </div>
-                  <div className="preview-card">
-                    <div className="preview-label">Recruiting Bonus</div>
-                    <div className="preview-value">
-                      {formatCurrency(formData.numberOfRecruits * 1000)}
-                    </div>
-                    <div className="preview-sub">
-                      Signing bonuses for new agents
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {formData.isRecruitingAgent !== null && (
+            <div className="summary-item">
+              <span>Team Building:</span>
+              <strong>{formData.isRecruitingAgent ? 'Yes' : 'No'}</strong>
             </div>
           )}
+
+          <div className="projected-income">
+            <h3>Projected Income</h3>
+            {formData.selectedLicenses.map(lic => (
+              <div key={lic} className="income-breakdown-item">
+                <span>License {lic}:</span>
+                <span>{formatCurrency(breakdown[lic] || 0)}</span>
+              </div>
+            ))}
+            <div className="total-income">
+              <span>Total Projected Income:</span>
+              <strong>{formatCurrency(totalIncome)}</strong>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="question-footer">
-        <button className="btn-back" onClick={prev}>
+      <div className="cta-row">
+        <button className="btn-outline" onClick={back}>
           <FontAwesomeIcon icon={faArrowLeft} /> Back
         </button>
-        <button className="btn-next" onClick={next}>
-          Next: See Results <FontAwesomeIcon icon={faArrowRight} />
+        <button className="btn-outline appointment-btn" onClick={next}>
+          View Detailed Results <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
     </div>
   );
-};
-
-export default Step5;
+}
