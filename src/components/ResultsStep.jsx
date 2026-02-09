@@ -1,114 +1,204 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserTie, faUsers, faTrophy, faDownload, faRedo } from "@fortawesome/free-solid-svg-icons";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { faUsers, faTrophy, faDownload, faRedo, faChartLine, faBullseye, faCertificate } from "@fortawesome/free-solid-svg-icons";
 
-const ResultsStep = ({ formData, results, formatCurrency, reset, setShowModal }) => {
-  const chartData = [
-    { name: 'Direct Commission', value: results.commissionEarnings, color: '#003266' },
-    { name: 'Override Earnings', value: results.overrideEarnings, color: '#f4b43c' }
-  ];
-
+const ResultsStep = ({ formData, reset, setShowModal }) => {
+  // Calculate results based on new flow
+  const calculateResults = () => {
+    const monthlyIncome = parseInt(formData.monthlyIncomeGoal?.replace(/\D/g, '')) || 0;
+    const caseSize = parseInt(formData.averageCaseSize) || 100000;
+    
+    // Annual income (monthly * 12)
+    const annualIncomeTarget = monthlyIncome * 12;
+    
+    // Calculate policies needed
+    const policiesNeeded = caseSize > 0 ? annualIncomeTarget / caseSize : 0;
+    
+    // Calculate ramp-up multiplier
+    let rampMultiplier = 1;
+    if (formData.rampUp === 'beginner') rampMultiplier = 1.5;
+    else if (formData.rampUp === 'midlevel') rampMultiplier = 1.3;
+    else if (formData.rampUp === 'experienced') rampMultiplier = 1.1;
+    
+    // Calculate income by license if effort allocated
+    const licenseIncome = {};
+    let totalAllocatedIncome = 0;
+    
+    if (formData.selectedLicenses.length > 1 && Object.keys(formData.effortAllocation).length > 0) {
+      formData.selectedLicenses.forEach(license => {
+        const effort = parseFloat(formData.effortAllocation[license]) || 0;
+        licenseIncome[license] = (annualIncomeTarget * effort) / 100;
+        totalAllocatedIncome += licenseIncome[license];
+      });
+    } else {
+      // Equal split if only one license or no allocation
+      formData.selectedLicenses.forEach(license => {
+        const share = 100 / formData.selectedLicenses.length;
+        licenseIncome[license] = (annualIncomeTarget * share) / 100;
+      });
+    }
+    
+    // Calculate override if team building
+    let overrideEarnings = 0;
+    if (formData.isRecruitingAgent) {
+      // Assuming 20% override on team production (simplified)
+      overrideEarnings = annualIncomeTarget * 0.2;
+    }
+    
+    const totalIncome = annualIncomeTarget + overrideEarnings;
+    
+    return {
+      annualIncomeTarget,
+      monthlyIncomeTarget: monthlyIncome,
+      caseSize,
+      policiesNeeded: Math.ceil(policiesNeeded),
+      policiesPerMonth: Math.ceil(policiesNeeded / 12),
+      rampMultiplier,
+      licenseIncome,
+      overrideEarnings,
+      totalIncome,
+      selectedLicenses: formData.selectedLicenses,
+      isRecruitingAgent: formData.isRecruitingAgent
+    };
+  };
+  
+  const results = calculateResults();
+  
+  const formatCurrency = (value) => {
+    const num = typeof value === 'string' ? parseInt(value.replace(/\D/g, '')) || 0 : value;
+    return `₱${num.toLocaleString('en-US')}`;
+  };
+  
   return (
-    <div className="question-page">
-      <div className="question-header">
-        <div className="question-number">Results</div>
-        <h2 className="question-title">Your Income Projection</h2>
-        <p className="question-description">
-          Based on your inputs, here's your projected earnings breakdown
-        </p>
-      </div>
+    <div className="step-card">
+      <div className="step-content-area">
+        <div className="question-header">
+          <div className="question-number">Results</div>
+          <h1>Your Income Projection</h1>
+          <p className="question-description">
+            Based on your inputs, here's your projected earnings breakdown
+          </p>
+        </div>
 
-      <div className="question-content">
         <div className="results-section">
+          {/* Summary Card */}
           <div className="summary-card">
             <div className="summary-header">
               <FontAwesomeIcon icon={faTrophy} />
               <h3>Total Annual Income</h3>
             </div>
             <div className="summary-total">{formatCurrency(results.totalIncome)}</div>
-            <div className="summary-subtitle">Based on your {formData.license} License and {formData.role} role</div>
+            <div className="summary-subtitle">
+              {results.isRecruitingAgent 
+                ? "Includes team override earnings" 
+                : "Based on personal production"}
+            </div>
           </div>
 
-          <div className="income-breakdown">
+          {/* Key Metrics */}
+          <div className="breakdown-grid">
             <div className="breakdown-card">
               <div className="breakdown-header">
-                <FontAwesomeIcon icon={faUserTie} />
-                <h4>Direct Commission</h4>
+                <FontAwesomeIcon icon={faBullseye} />
+                <h4>Monthly Target</h4>
               </div>
-              <div className="breakdown-value">{formatCurrency(results.commissionEarnings)}</div>
+              <div className="breakdown-value">{formatCurrency(results.monthlyIncomeTarget)}</div>
               <div className="breakdown-details">
                 <div className="detail-item">
-                  <span>Commission Rate:</span>
-                  <span>{formData.commissionRate}%</span>
+                  <span>Annual Target:</span>
+                  <span>{formatCurrency(results.annualIncomeTarget)}</span>
                 </div>
                 <div className="detail-item">
-                  <span>Required ANP:</span>
-                  <span>{formatCurrency(results.requiredANP)}</span>
+                  <span>Average Case Size:</span>
+                  <span>{formatCurrency(results.caseSize)}</span>
                 </div>
                 <div className="detail-item">
-                  <span>Clients Needed:</span>
-                  <span>{Math.ceil(results.totalClientsPerYear / 52)}/week</span>
+                  <span>Policies per Month:</span>
+                  <span>{results.policiesPerMonth}</span>
                 </div>
               </div>
             </div>
 
-            {formData.license === "L" && formData.isRecruitingAgent && (
+            <div className="breakdown-card">
+              <div className="breakdown-header">
+                <FontAwesomeIcon icon={faChartLine} />
+                <h4>Ramp-up Plan</h4>
+              </div>
+              <div className="breakdown-value">{results.rampMultiplier}×</div>
+              <div className="breakdown-details">
+                <div className="detail-item">
+                  <span>Activity Level:</span>
+                  <span>
+                    {formData.rampUp === 'beginner' && 'Beginner (6 months)'}
+                    {formData.rampUp === 'midlevel' && 'Mid-level (4 months)'}
+                    {formData.rampUp === 'experienced' && 'Experienced (3 months)'}
+                    {formData.rampUp === 'none' && 'No ramp-up'}
+                    {formData.rampUp === 'custom' && 'Custom'}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span>Annual Policies:</span>
+                  <span>{results.policiesNeeded}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* License Breakdown */}
+            {results.selectedLicenses.length > 0 && (
               <div className="breakdown-card">
                 <div className="breakdown-header">
+                  <FontAwesomeIcon icon={faCertificate} />
+                  <h4>License Breakdown</h4>
+                </div>
+                <div className="breakdown-details">
+                  {Object.entries(results.licenseIncome).map(([license, amount]) => (
+                    <div key={license} className="detail-item">
+                      <span>License {license}:</span>
+                      <span>{formatCurrency(amount)}</span>
+                      {formData.selectedLicenses.length > 1 && (
+                        <small style={{ fontSize: '11px', color: '#666' }}>
+                          ({formData.effortAllocation[license] || (100/results.selectedLicenses.length).toFixed(0)}%)
+                        </small>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Team Overrides */}
+            {results.isRecruitingAgent && (
+              <div className="breakdown-card bonus-card">
+                <div className="breakdown-header">
                   <FontAwesomeIcon icon={faUsers} />
-                  <h4>Override Earnings</h4>
+                  <h4>Team Overrides</h4>
                 </div>
                 <div className="breakdown-value">{formatCurrency(results.overrideEarnings)}</div>
                 <div className="breakdown-details">
                   <div className="detail-item">
-                    <span>Advisors:</span>
-                    <span>{formData.numberOfAdvisors}</span>
+                    <span>Team Building:</span>
+                    <span>Yes</span>
                   </div>
                   <div className="detail-item">
                     <span>Override Rate:</span>
-                    <span>{formData.overrideRate}%</span>
+                    <span>20% (estimated)</span>
                   </div>
                   <div className="detail-item">
-                    <span>Recruits:</span>
-                    <span>{formData.numberOfRecruits}</span>
+                    <span>Additional Income:</span>
+                    <span>+{formatCurrency(results.overrideEarnings)}</span>
                   </div>
+                </div>
+                <div className="bonus-note">
+                  Team overrides provide additional earnings from your team's production
                 </div>
               </div>
             )}
           </div>
 
-          <div className="chart-section">
-            <h4>Income Distribution</h4>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={90}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="chart-center">
-                <div className="chart-total">{formatCurrency(results.totalIncome)}</div>
-                <div className="chart-label">Total Annual</div>
-              </div>
-            </div>
-          </div>
-
+          {/* Action Buttons */}
           <div className="action-buttons">
             <button className="action-btn recalculate" onClick={reset}>
-              <FontAwesomeIcon icon={faRedo} /> Re-calculate
+              <FontAwesomeIcon icon={faRedo} /> Start Over
             </button>
             <button className="action-btn download" onClick={() => setShowModal(true)}>
               <FontAwesomeIcon icon={faDownload} /> Download Report
