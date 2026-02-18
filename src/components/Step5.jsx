@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faArrowLeft, 
+  faArrowRight, 
+  faCircleInfo,
+  faCheckCircle,
+  faExclamationCircle
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function Step5({ formData, setFormData, next, back, canGoNext }) {
   // Skip this step if less than 2 licenses
@@ -24,17 +30,13 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
     }));
   };
 
-  // Calculate total
   const total = formData.selectedLicenses.reduce((sum, license) => {
     return sum + (formData.effortAllocation[license] || 0);
   }, 0);
 
   const isValid = Math.abs(total - 100) < 1;
-
-  // Calculate remaining percentage
   const remaining = 100 - total;
 
-  // Don't render anything if less than 2 licenses
   if (formData.selectedLicenses.length < 2) {
     return null;
   }
@@ -42,20 +44,32 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
   return (
     <div className="step-card">
       <div className="step-content-area">
-        <div className="step-indicator">
-          <div className="step-number">5</div>
-          <div className="step-title">Effort Split</div>
+        <div className="step-header">
+          <div className="step-indicator-modern">
+            <div className="step-number-modern">5</div>
+            <div className="step-title-modern">
+              <span className="step-title-label">STEP FIVE</span>
+              <span className="step-title-main">Effort Split</span>
+            </div>
+          </div>
         </div>
 
-        <h1>How do you want to split your time?</h1>
-        <p className="step-description">
+        <h1 className="step-main-title">
+          How do you want to split your time?
+        </h1>
+        
+        <p className="step-supporting-text">
           Distribute your effort across your selected licenses. The total must equal 100%.
         </p>
 
-        {/* Info card */}
-        <div className="effort-info-card">
-          <FontAwesomeIcon icon={faCircleInfo} className="info-icon" />
-          <span>Allocate percentages based on where you'll focus your time</span>
+        <div className="insight-card" style={{ marginBottom: '28px' }}>
+          <FontAwesomeIcon icon={faCircleInfo} className="insight-icon" />
+          <div className="insight-content">
+            <span className="insight-title">Quick tip</span>
+            <span className="insight-text">
+              Allocate percentages based on where you'll focus your time
+            </span>
+          </div>
         </div>
 
         <div className="effort-inputs">
@@ -76,7 +90,6 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
                   <span className="suffix">%</span>
                 </div>
                 
-                {/* Progress bar for each license */}
                 <div className="license-progress-bar">
                   <div 
                     className="license-progress-fill"
@@ -88,38 +101,39 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
           ))}
         </div>
 
-        {/* Total section with visual feedback */}
-        <div className={`effort-total-container ${isValid ? 'valid' : 'invalid'}`}>
-          <div className="total-label">
-            <span>Total Allocation</span>
-            <span className="total-percentage">{total}%</span>
+        {/* MINIMALISTIC TOTAL CARD - Clean, simple, no progress bar */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: '24px',
+          padding: '12px 16px',
+          backgroundColor: isValid ? '#f0fdf4' : '#fef2f2',
+          borderRadius: '40px',
+          border: `1px solid ${isValid ? '#10b981' : '#ef4444'}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FontAwesomeIcon 
+              icon={isValid ? faCheckCircle : faExclamationCircle} 
+              style={{ color: isValid ? '#10b981' : '#ef4444', fontSize: '16px' }} 
+            />
+            <span style={{ 
+              fontSize: '14px', 
+              fontWeight: '500',
+              color: isValid ? '#10b981' : '#ef4444'
+            }}>
+              {isValid ? 'Complete' : total > 100 ? 'Over' : `${remaining}% left`}
+            </span>
           </div>
-          
-          {/* Main progress bar */}
-          <div className="total-progress-bar">
-            <div 
-              className="total-progress-fill"
-              style={{ width: `${total}%` }}
-            ></div>
-          </div>
-          
-          <div className="total-message">
-            {isValid ? (
-              <span className="success-message">
-                <span className="check-icon">✓</span> Ready to continue
-              </span>
-            ) : (
-              <span className="error-message">
-                <span className="x-icon">✗</span> 
-                {total > 100 
-                  ? `Over by ${total - 100}%` 
-                  : `Need ${remaining}% more to reach 100%`}
-              </span>
-            )}
+          <div style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            color: isValid ? '#10b981' : '#ef4444',
+          }}>
+            {total}%
           </div>
         </div>
 
-        {/* Quick distribution buttons */}
         <div className="quick-distribute">
           <span className="quick-label">Quick distribute:</span>
           <div className="quick-buttons">
@@ -153,17 +167,26 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
         </div>
       </div>
 
-      <div className="next-button-container">
+      <div className="navigation-container">
         <button className="btn-outline" onClick={back}>
           <FontAwesomeIcon icon={faArrowLeft} /> Back
         </button>
-        <button
-          className="next-button"
-          onClick={next}
-          disabled={!isValid}
-        >
-          Next <FontAwesomeIcon icon={faArrowRight} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {!isValid && (
+            <div className="navigation-hint">
+              <span className="hint-dot"></span>
+              <span className="hint-text">Must equal 100%</span>
+            </div>
+          )}
+          <button
+            className="next-button-modern"
+            onClick={next}
+            disabled={!isValid}
+          >
+            <span>Continue to Team Building</span>
+            <FontAwesomeIcon icon={faArrowRight} className="button-icon" />
+          </button>
+        </div>
       </div>
     </div>
   );

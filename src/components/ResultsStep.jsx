@@ -95,30 +95,9 @@ const ResultsStep = ({ formData, reset, setShowModal }) => {
             </div>
           </div>
 
-          {/* Key Metrics */}
+          {/* Key Metrics - Monthly Target Card REMOVED */}
           <div className="breakdown-grid">
-            <div className="breakdown-card">
-              <div className="breakdown-header">
-                <FontAwesomeIcon icon={faBullseye} />
-                <h4>Monthly Target</h4>
-              </div>
-              <div className="breakdown-value">{formatCurrency(results.monthlyIncomeTarget)}</div>
-              <div className="breakdown-details">
-                <div className="detail-item">
-                  <span>Annual Target:</span>
-                  <span>{formatCurrency(results.annualIncomeTarget)}</span>
-                </div>
-                <div className="detail-item">
-                  <span>Average Case Size:</span>
-                  <span>{formatCurrency(results.caseSize)}</span>
-                </div>
-                <div className="detail-item">
-                  <span>Policies per Month:</span>
-                  <span>{results.policiesPerMonth}</span>
-                </div>
-              </div>
-            </div>
-
+            {/* Ramp-up Plan Card - Now first */}
             <div className="breakdown-card">
               <div className="breakdown-header">
                 <FontAwesomeIcon icon={faChartLine} />

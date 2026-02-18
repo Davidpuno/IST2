@@ -53,24 +53,12 @@ const ProgressBar = ({ currentStep, totalSteps }) => {
         ))}
       </div>
 
-      {/* Progress bar */}
+      {/* Progress bar - only */}
       <div className="progress-container">
         <div 
           className="progress-bar-fill" 
           style={{ width: `${progress}%` }}
         ></div>
-      </div>
-
-      {/* Step labels below */}
-      <div className="step-labels">
-        {steps.map((stepNumber) => (
-          <span 
-            key={stepNumber} 
-            className={`step-label ${stepNumber === currentStep ? 'active' : ''}`}
-          >
-            {stepLabels[stepNumber]}
-          </span>
-        ))}
       </div>
     </div>
   );
