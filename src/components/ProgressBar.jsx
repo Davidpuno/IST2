@@ -1,4 +1,4 @@
-// ProgressBar.jsx - CARD STYLE WITH HOVER TOOLTIPS
+// ProgressBar.jsx - SIMPLE PROGRESS INDICATOR
 import React from "react";
 
 const ProgressBar = ({ currentStep, totalSteps }) => {
@@ -16,47 +16,29 @@ const ProgressBar = ({ currentStep, totalSteps }) => {
     7: "Results"
   };
 
-  // Step descriptions for tooltips
-  const stepDescriptions = {
-    1: "Set your monthly income goal",
-    2: "Define average commission per policy",
-    3: "Choose your ramp-up timeline",
-    4: "Select your licenses",
-    5: "Allocate effort across licenses",
-    6: "Decide on team building",
-    7: "View your projected earnings"
-  };
-
   return (
-    <div className="progress-section">
-      {/* Step cards above the progress bar */}
-      <div className="step-numbers-top">
+    <div className="progress-section-minimal">
+      {/* Simple step indicators - no cards */}
+      <div className="step-indicators-minimal">
         {steps.map((stepNumber) => (
           <div 
             key={stepNumber}
-            className={`step-number-top 
+            className={`step-minimal 
               ${stepNumber === currentStep ? 'active' : ''} 
               ${stepNumber < currentStep ? 'completed' : ''}`}
           >
-            <div 
-              className="step-card-indicator"
-              data-tooltip={stepDescriptions[stepNumber]}
-            >
-              <span className="step-number-text">
-                {stepNumber < currentStep ? '✓' : stepNumber}
-              </span>
-              <span className="step-label-text">
-                {stepLabels[stepNumber]}
-              </span>
-            </div>
+            <span className="step-dot"></span>
+            <span className="step-label-minimal">
+              {stepLabels[stepNumber]}
+            </span>
           </div>
         ))}
       </div>
 
-      {/* Progress bar - only */}
-      <div className="progress-container">
+      {/* Simple progress bar */}
+      <div className="progress-container-minimal">
         <div 
-          className="progress-bar-fill" 
+          className="progress-bar-fill-minimal"
           style={{ width: `${progress}%` }}
         ></div>
       </div>

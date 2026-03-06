@@ -3,11 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faArrowLeft, 
   faArrowRight,
-  faCircleInfo,
-  faSeedling,
-  faDumbbell,
-  faRocket,
-  faChartLine
+  faCircleInfo
 } from '@fortawesome/free-solid-svg-icons';
 
 const rampOptions = [
@@ -16,36 +12,28 @@ const rampOptions = [
     title: 'New / Beginner',
     multiplier: '1.5×',
     duration: '6 months',
-    description: 'Best for agents in first 1–2 years',
-    icon: faSeedling,
-    iconColor: '#10b981'
+    description: 'Best for agents in first 1–2 years'
   },
   { 
     id: 'midlevel',
     title: 'Average / Mid-level',
     multiplier: '1.3×',
     duration: '4 months',
-    description: 'Good if you already have some experience',
-    icon: faDumbbell,
-    iconColor: '#f59e0b'
+    description: 'Good if you already have some experience'
   },
   { 
     id: 'experienced',
     title: 'Experienced / Fast',
     multiplier: '1.1×',
     duration: '3 months',
-    description: 'For consistent producers',
-    icon: faRocket,
-    iconColor: '#3b82f6'
+    description: 'For consistent producers'
   },
   { 
     id: 'none',
     title: 'No ramp-up',
     multiplier: '1.0×',
     duration: 'flat every month',
-    description: 'You\'re already running at full speed',
-    icon: faChartLine,
-    iconColor: '#64748b'
+    description: "You're already running at full speed"
   }
 ];
 
@@ -121,11 +109,7 @@ export default function Step3({ formData, setFormData, next, back, canGoNext }) 
         {/* Main title */}
         <h1 className="step-main-title">
           How fast do you expect to build momentum?
-        </h1>
-        
-        <p className="step-supporting-text">
-          Most new advisors need extra effort in the first few months while building skills and pipeline.
-        </p>
+        </h1>     
 
         {/* Info card */}
         <div className="insight-card" style={{ marginBottom: '28px' }}>
@@ -138,35 +122,48 @@ export default function Step3({ formData, setFormData, next, back, canGoNext }) 
           </div>
         </div>
 
-        {/* Ramp options grid */}
-        <div className="cards-grid">
+        {/* Ramp options grid - ROW LAYOUT */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(4, 1fr)', 
+          gap: '12px',
+          marginBottom: '24px'
+        }}>
           {rampOptions.map(option => (
             <div
               key={option.id}
               className={`card ${formData.rampUp === option.id ? 'selected' : ''}`}
               onClick={() => handleRampSelect(option)}
-            >
-              <div className="card-icon-wrapper" style={{ 
-                width: '48px', 
-                height: '48px', 
-                borderRadius: '16px',
-                background: `${option.iconColor}15`,
+              style={{
+                padding: '16px 12px',
+                margin: 0,
+                minHeight: '140px',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 12px'
-              }}>
-                <FontAwesomeIcon 
-                  icon={option.icon} 
-                  style={{ 
-                    fontSize: '24px', 
-                    color: option.iconColor 
-                  }} 
-                />
-              </div>
-              <strong>{option.title}</strong>
-              <span>{option.multiplier} activity for first {option.duration}</span>
-              <small>{option.description}</small>
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}
+            >
+              <strong style={{ 
+                fontSize: '15px', 
+                marginBottom: '6px',
+                color: formData.rampUp === option.id ? '#003266' : '#0a1c2f'
+              }}>{option.title}</strong>
+              <span style={{ 
+                fontSize: '18px', 
+                fontWeight: '700', 
+                color: formData.rampUp === option.id ? '#003266' : '#1e293b',
+                marginBottom: '4px'
+              }}>{option.multiplier}</span>
+              <span style={{ 
+                fontSize: '12px', 
+                color: '#64748b',
+                marginBottom: '4px'
+              }}>for first {option.duration}</span>
+              <small style={{ 
+                fontSize: '10px', 
+                color: '#94a3b8',
+                lineHeight: '1.3'
+              }}>{option.description}</small>
             </div>
           ))}
         </div>

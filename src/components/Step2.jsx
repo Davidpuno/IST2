@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faArrowLeft, 
@@ -13,20 +13,39 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const caseSizes = [
-  { id: '1', amount: '₱80,000', value: 80000, label: 'Typical for newer advisors', icon: faSeedling, iconColor: '#10b981', description: 'Good starting point' },
-  { id: '2', amount: '₱100,000', value: 100000, label: 'Solid mid-range', icon: faDumbbell, iconColor: '#f59e0b', description: 'Most common target' },
-  { id: '3', amount: '₱125,000', value: 125000, label: 'Strong average', icon: faChartLine, iconColor: '#3b82f6', description: 'Above average performer' },
-  { id: '4', amount: '₱150,000+', value: 150000, label: 'High-value / premium focus', icon: faBullseye, iconColor: '#8b5cf6', description: 'Elite producer level' }
+  { id: '1', amount: '₱80,000', value: 80000, label: 'Typical for newer advisors', description: 'Good starting point' },
+  { id: '2', amount: '₱100,000', value: 100000, label: 'Solid mid-range', description: 'Most common target' },
+  { id: '3', amount: '₱125,000', value: 125000, label: 'Strong average', description: 'Above average performer' },
+  { id: '4', amount: '₱150,000+', value: 150000, label: 'High-value / premium focus', description: 'Elite producer level' }
 ];
 
 export default function Step2({ formData, setFormData, next, back, canGoNext }) {
-  const handleCaseSelect = (caseSize) => {
-    setFormData({ ...formData, averageCaseSize: caseSize.value.toString() });
+  const [localValue, setLocalValue] = useState(formData.averageCaseSize || '100000');
+  const [isFocused, setIsFocused] = useState(false);
+  const [activePreset, setActivePreset] = useState(null);
+
+  useEffect(() => {
+    setLocalValue(formData.averageCaseSize || '100000');
+  }, [formData.averageCaseSize]);
+
+  const handleInputChange = (e) => {
+    const rawValue = e.target.value.replace(/,/g, '').replace(/\D/g, '');
+    const limitedValue = rawValue.slice(0, 7);
+    setLocalValue(limitedValue);
+    setFormData({ ...formData, averageCaseSize: limitedValue });
+    setActivePreset(null);
   };
 
-  const handleCustomChange = (e) => {
-    const value = parseInt(e.target.value);
-    setFormData({ ...formData, averageCaseSize: value.toString() });
+  const handleCaseSelect = (caseSize) => {
+    setLocalValue(caseSize.value.toString());
+    setFormData({ ...formData, averageCaseSize: caseSize.value.toString() });
+    setActivePreset(caseSize.value);
+  };
+
+  const formatNumber = (num) => {
+    if (!num) return '';
+    const number = num.toString().replace(/\D/g, '');
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   const formatCurrency = (value) => {
@@ -34,8 +53,7 @@ export default function Step2({ formData, setFormData, next, back, canGoNext }) 
     return `₱${num.toLocaleString('en-US')}`;
   };
 
-  const currentValue = parseInt(formData.averageCaseSize) || 100000;
-  const sliderPercentage = ((currentValue - 60000) / 190000) * 100;
+  const currentValue = parseInt(localValue) || 100000;
 
   const getMotivationalMessage = () => {
     if (currentValue >= 150000) return { icon: faBullseye, message: "High-value focus! You're aiming for premium clients and bigger commissions." };
@@ -63,11 +81,6 @@ export default function Step2({ formData, setFormData, next, back, canGoNext }) 
           What's your average commission per policy?
         </h1>
         
-        <p className="step-supporting-text">
-          Bigger cases = fewer families you need to help each month. 
-          Be realistic based on your current clients and market.
-        </p>
-
         <div className="insight-card" style={{ marginBottom: '28px' }}>
           <FontAwesomeIcon icon={faCircleInfo} className="insight-icon" />
           <div className="insight-content">
@@ -78,70 +91,70 @@ export default function Step2({ formData, setFormData, next, back, canGoNext }) 
           </div>
         </div>
 
-        {/* Cards - INPUT */}
-        <div className="cards-grid">
-          {caseSizes.map(caseSize => (
-            <div
-              key={caseSize.id}
-              className={`card ${currentValue === caseSize.value ? 'selected' : ''}`}
-              onClick={() => handleCaseSelect(caseSize)}
-            >
-              <div className="card-icon-wrapper" style={{ 
-                width: '48px', height: '48px', borderRadius: '16px',
-                background: `${caseSize.iconColor}15`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 12px'
-              }}>
-                <FontAwesomeIcon icon={caseSize.icon} style={{ fontSize: '24px', color: caseSize.iconColor }} />
-              </div>
-              <strong>{caseSize.amount}</strong>
-              <span>{caseSize.label}</span>
-              <small>{caseSize.description}</small>
-              {currentValue === caseSize.value && (
-                <FontAwesomeIcon icon={faCheckCircle} style={{
-                  position: 'absolute', top: '12px', right: '12px',
-                  color: '#10b981', fontSize: '20px'
-                }} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Slider - QUICK SELECT */}
-        <div className="income-slider-section" style={{ marginTop: '16px' }}>
-          <div className="slider-value-display">
-            <FontAwesomeIcon icon={faCoins} style={{ color: '#003266', marginRight: '4px' }} />
-            <span className="slider-value-label">Your case size:</span>
-            <span className="slider-value-amount">{formatCurrency(currentValue)}</span>
-            <span className="slider-value-period">per policy</span>
+        {/* Input area similar to Step1 */}
+        <div className="income-card" style={{ marginBottom: '24px' }}>
+          <div className="income-card-header">
+            <FontAwesomeIcon icon={faCoins} className="income-card-icon" />
+            <span className="income-card-title">Set your average case size</span>
           </div>
 
-          <div className="slider-container">
+          {/* Input */}
+          <div className={`income-input-wrapper ${isFocused ? 'focused' : ''} ${localValue ? 'has-value' : ''}`}>
+            <span className="currency-sign">₱</span>
             <input
-              type="range"
-              min="60000"
-              max="250000"
-              step="5000"
-              value={currentValue}
-              onChange={handleCustomChange}
-              className="income-slider"
-              style={{
-                background: `linear-gradient(90deg, #003266 ${sliderPercentage}%, #e2e8f0 ${sliderPercentage}%)`
-              }}
+              type="text"
+              inputMode="numeric"
+              value={formatNumber(localValue)}
+              onChange={handleInputChange}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="0"
+              className="income-input-field"
             />
-            
-            <div className="slider-markers">
-              <span className="marker-label">₱60k</span>
-              <span className="marker-label">₱100k</span>
-              <span className="marker-label">₱150k</span>
-              <span className="marker-label">₱200k</span>
-              <span className="marker-label">₱250k</span>
-            </div>
+            <span className="income-input-period">per policy</span>
+          </div>
+        </div>
+
+        {/* Quick select cards - ICONS REMOVED */}
+        <div className="income-presets-section" style={{ marginBottom: '24px' }}>
+          <div className="presets-header">
+            <FontAwesomeIcon icon={faCoins} className="presets-icon" />
+            <span className="presets-title">Quick select by experience level</span>
+          </div>
+          
+          <div className="presets-grid">
+            {caseSizes.map((caseSize) => (
+              <button
+                key={caseSize.id}
+                className={`preset-card ${activePreset === caseSize.value ? 'active' : ''}`}
+                onClick={() => handleCaseSelect(caseSize)}
+              >
+                <span className="preset-value" style={{ 
+                  color: activePreset === caseSize.value ? 'white' : '#0a1c2f'
+                }}>{caseSize.amount}</span>
+                <span className="preset-description" style={{ 
+                  color: activePreset === caseSize.value ? 'rgba(255,255,255,0.7)' : '#64748b'
+                }}>{caseSize.description}</span>
+                
+                {activePreset === caseSize.value && (
+                  <FontAwesomeIcon 
+                    icon={faCheckCircle}
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      color: 'white',
+                      fontSize: '16px'
+                    }}
+                  />
+                )}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Motivational message */}
-        <div className="motivation-message" style={{ marginTop: '24px', background: '#f0f9ff', border: '1px solid #b8e1ff' }}>
+        <div className="motivation-message" style={{ background: '#f0f9ff', border: '1px solid #b8e1ff' }}>
           <FontAwesomeIcon icon={motivation.icon} style={{ color: '#003266', fontSize: '18px' }} />
           <span>{motivation.message}</span>
         </div>
@@ -158,7 +171,7 @@ export default function Step2({ formData, setFormData, next, back, canGoNext }) 
           {!canGoNext() && (
             <div className="navigation-hint">
               <span className="hint-dot"></span>
-              <span className="hint-text">Select a case size</span>
+              <span className="hint-text">Enter your case size</span>
             </div>
           )}
           <button

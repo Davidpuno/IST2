@@ -16,10 +16,7 @@ export default function Step6({ formData, setFormData, next, back, canGoNext }) 
         </div>
 
         <h1>Do you plan to build or recruit a team?</h1>
-        <p>
-          Recruiting lets you earn overrides from your team's production — great for scaling income faster.
-        </p>
-
+        
         <div className="cards-grid">
           <div
             className={`card ${formData.isRecruitingAgent === true ? 'selected' : ''}`}

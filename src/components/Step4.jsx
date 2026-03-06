@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const licenses = [
-  { id: 'AZ', name: 'AZ License', description: 'Basic insurance license for property and casualty' },
-  { id: 'NL', name: 'NL License', description: 'Non-life insurance focus including health and auto' },
-  { id: 'GL', name: 'GL License', description: 'Global license for international operations' }
+  { id: 'AZ', name: 'AZ License', description: 'Personal Life Insurance' },
+  { id: 'NL', name: 'NL License', description: 'Business and Insurance' },
+  { id: 'GL', name: 'GL License', description: 'International Operations & High Net Worth Clients' }
 ];
 
 export default function Step4({ formData, setFormData, next, back, canGoNext }) {
@@ -27,9 +27,6 @@ export default function Step4({ formData, setFormData, next, back, canGoNext }) 
         </div>
 
         <h1>Which licenses do you currently hold or are working toward?</h1>
-        <p>
-          Select all that apply. This helps us calculate your earning potential accurately — higher licenses unlock bigger cases and team overrides.
-        </p>
 
         <div className="cards-grid">
           {licenses.map(license => (

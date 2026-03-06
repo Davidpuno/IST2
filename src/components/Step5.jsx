@@ -57,10 +57,6 @@ export default function Step5({ formData, setFormData, next, back, canGoNext }) 
         <h1 className="step-main-title">
           How do you want to split your time?
         </h1>
-        
-        <p className="step-supporting-text">
-          Distribute your effort across your selected licenses. The total must equal 100%.
-        </p>
 
         <div className="insight-card" style={{ marginBottom: '28px' }}>
           <FontAwesomeIcon icon={faCircleInfo} className="insight-icon" />

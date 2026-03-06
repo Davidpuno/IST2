@@ -47,12 +47,12 @@ export default function Step1({ formData, setFormData, next, canGoNext }) {
   const incomeValue = parseInt(localValue) || 100000;
   
   const incomePresets = [
-    { value: 50000, label: '₱50k', icon: faSeedling, iconColor: '#10b981', description: 'Great for beginners' },
-    { value: 100000, label: '₱100k',  icon: faDumbbell, iconColor: '#f59e0b', description: 'Top 25% of advisors' },
-    { value: 150000, label: '₱150k',  icon: faChartSimple, iconColor: '#3b82f6', description: 'Above average performer' },
-    { value: 250000, label: '₱250k', icon: faRocket, iconColor: '#8b5cf6', description: 'Top producer level' },
-    { value: 400000, label: '₱400k', icon: faCrown, iconColor: '#f4b43c', description: 'Elite producer' },
-    { value: 600000, label: '₱600k+', icon: faStar, iconColor: '#ec4899', description: 'Top 1% of advisors' }
+    { value: 30000, label: '₱30k', description: 'Great for beginners' },
+    { value: 100000, label: '₱100k', description: 'Top 25% of advisors' },
+    { value: 150000, label: '₱150k', description: 'Above average performer' },
+    { value: 250000, label: '₱250k', description: 'Top producer level' },
+    { value: 400000, label: '₱400k', description: 'Elite producer' },
+    { value: 600000, label: '₱600k+', description: 'Top 1% of advisors' }
   ];
 
   const handlePresetClick = (preset) => {
@@ -80,11 +80,6 @@ export default function Step1({ formData, setFormData, next, canGoNext }) {
         <h1 className="step-main-title">
           What monthly income do you want to earn?
         </h1>
-        
-        <p className="step-supporting-text">
-          This is your First-Year Commission (FYC) target. Be ambitious but realistic — 
-          we'll help you create a plan to get there.
-        </p>
 
         {/* Income input card */}
         <div className="income-card">
@@ -156,30 +151,9 @@ export default function Step1({ formData, setFormData, next, canGoNext }) {
                   className={`preset-card ${activePreset === preset.value ? 'active' : ''}`}
                   onClick={() => handlePresetClick(preset)}
                 >
-                  <div className="preset-icon-wrapper" style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '12px',
-                    background: `${preset.iconColor}15`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 8px'
-                  }}>
-                    <FontAwesomeIcon 
-                      icon={preset.icon} 
-                      style={{ 
-                        fontSize: '20px', 
-                        color: activePreset === preset.value ? 'white' : preset.iconColor 
-                      }} 
-                    />
-                  </div>
                   <span className="preset-value" style={{ 
                     color: activePreset === preset.value ? 'white' : '#0a1c2f'
                   }}>{preset.label}</span>
-                  <span className="preset-level" style={{ 
-                    color: activePreset === preset.value ? 'rgba(255,255,255,0.9)' : '#003266'
-                  }}>{preset.level}</span>
                   <span className="preset-description" style={{ 
                     color: activePreset === preset.value ? 'rgba(255,255,255,0.7)' : '#64748b'
                   }}>{preset.description}</span>
