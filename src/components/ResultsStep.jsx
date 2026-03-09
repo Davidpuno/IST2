@@ -116,7 +116,7 @@ const ResultsStep = ({ formData, reset }) => {
       // Reset button state
       const button = document.querySelector('.action-btn.download');
       if (button) {
-        button.innerHTML = '<svg class="svg-inline--fa fa-file-excel" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-excel" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM216 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v48h40c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16h-40v48c0 8.8-7.2 16-16 16h-32c-8.8 0-16-7.2-16-16V352H176v48c0 8.8-7.2 16-16 16H128c-8.8 0-16-7.2-16-16V352H72c-8.8 0-16-7.2-16-16V304c0-8.8 7.2-16 16-16h40V240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v48h40V240z"></path></svg> Download 100 Prospect Template';
+        button.innerHTML = ' Download 100 Prospect Template';
         button.disabled = false;
       }
     }
@@ -196,6 +196,7 @@ const ResultsStep = ({ formData, reset }) => {
             {/* Team Overrides and Action Buttons Side by Side */}
             {results.isRecruitingAgent && (
               <div className="bonus-row">
+                {/* Team Overrides Card - Left side (2/3 width) */}
                 <div className="breakdown-card bonus-card">
                   <div className="breakdown-header">
                     <FontAwesomeIcon icon={faUsers} />
@@ -221,6 +222,8 @@ const ResultsStep = ({ formData, reset }) => {
                     <span>Team overrides provide additional earnings from your team's production</span>
                   </div>
                 </div>
+
+                {/* Action Buttons - Right side (1/3 width) */}
                 <div className="action-buttons action-buttons-vertical results-action-buttons">
                   <button className="action-btn recalculate" onClick={reset}>
                     <FontAwesomeIcon icon={faRedo} /> Start Over

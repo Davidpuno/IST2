@@ -1,15 +1,3 @@
-/* Results Page Action Buttons Styling */
-.results-action-buttons {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
-  min-width: 220px;
-  margin-left: 20px;
-  gap: 18px;
-  background: none;
-  box-shadow: none;
-}
 /* ==========================================================================
    PREMIUM FINANCIAL WIZARD - 2025/2026 PROFESSIONAL EDITION
    ==========================================================================
@@ -263,7 +251,6 @@ body {
   overflow: hidden;
   width: 100%;
 }
-
 
 .progress-bar-fill-minimal {
   height: 100%;
@@ -1609,6 +1596,84 @@ button > * {
   margin-top: auto; /* Push to bottom */
 }
 
+/* ================= RESULTS PAGE - BONUS ROW LAYOUT ================= */
+.bonus-row {
+  display: flex;
+  gap: var(--space-3);
+  grid-column: span 3; /* Make it span all 3 columns */
+  width: 100%;
+}
+
+/* Team Overrides Card - Takes 2/3 of the space */
+.bonus-row .bonus-card {
+  flex: 2;
+  margin-bottom: 0;
+  height: auto;
+  min-width: 0; /* Prevents flex overflow */
+}
+
+/* Action Buttons Container - Takes 1/3 of the space */
+.bonus-row .action-buttons-vertical {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: 0;
+  min-width: 0; /* Prevents flex overflow */
+  height: auto;
+  justify-content: flex-start;
+}
+
+/* Style the buttons inside the vertical container */
+.bonus-row .action-buttons-vertical button {
+  width: 100%;
+  padding: var(--space-3) var(--space-2);
+  font-size: var(--font-size-xs);
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.3;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+/* Adjust button icons */
+.bonus-row .action-buttons-vertical button svg {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+/* Specific styles for each button type */
+.bonus-row .action-buttons-vertical .action-btn.recalculate {
+  background: white !important;
+  color: var(--color-navy-800) !important;
+  border: 1px solid var(--color-gray-300) !important;
+  box-shadow: var(--shadow-xs);
+}
+
+.bonus-row .action-buttons-vertical .action-btn.recalculate:hover {
+  background: var(--color-gray-200) !important;
+  border-color: var(--color-gray-400) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.bonus-row .action-buttons-vertical .action-btn.download {
+  background: var(--color-green-600) !important;
+  color: white !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.bonus-row .action-buttons-vertical .action-btn.download:hover {
+  background: var(--color-green-500) !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 /* License Visualization */
 .license-visualization {
   display: flex;
@@ -2004,6 +2069,34 @@ button > * {
   .breakdown-grid {
     grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
   }
+  
+  .bonus-row {
+    grid-column: span 2; /* Span 2 columns on tablet */
+    flex-direction: column;
+  }
+  
+  .bonus-row .bonus-card,
+  .bonus-row .action-buttons-vertical {
+    flex: none;
+    width: 100%;
+  }
+  
+  .bonus-row .action-buttons-vertical {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+  
+  .bonus-row .action-buttons-vertical button {
+    flex: 1;
+    min-height: 50px;
+    padding: var(--space-2);
+    flex-direction: row;
+  }
+  
+  .bonus-row .action-buttons-vertical button svg {
+    margin-bottom: 0;
+    margin-right: 4px;
+  }
 }
 
 /* Mobile Large */
@@ -2092,6 +2185,14 @@ button > * {
   /* Results grid on mobile */
   .breakdown-grid {
     grid-template-columns: 1fr !important; /* Single column on mobile */
+  }
+  
+  .bonus-row {
+    grid-column: span 1 !important; /* Full width on mobile */
+  }
+  
+  .bonus-row .action-buttons-vertical {
+    flex-direction: column;
   }
 }
 
